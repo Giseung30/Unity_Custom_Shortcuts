@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 public class Shortcuts : Editor
 {
-    [MenuItem("Shortcut/Group %g")]
+    [MenuItem("Shortcuts/Group %g")]
     public static void Group()
     {
         GameObject[] gameObjects = Selection.gameObjects;
@@ -64,7 +64,7 @@ public class Shortcuts : Editor
         }
         DestroyImmediate(root.gameObject);
     }
-    [MenuItem("Shortcut/Ungroup %#g")]
+    [MenuItem("Shortcuts/Ungroup %#g")]
     public static void Ungroup()
     {
         GameObject[] gameObjects = Selection.gameObjects;
