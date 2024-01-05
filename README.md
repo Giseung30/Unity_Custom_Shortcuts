@@ -15,6 +15,6 @@
     - 예시
         + **Shift+Alt+G** 단축키를 가진 메뉴를 만들려면 `"MyMenu/Do Something #&g"`를 사용하고, G키만 사용하려면 `"MyMenu/Do Something _g"`를 사용한다.
 ## 🗒️ 구현 함수
-> 이 함수들은 모두 **Undo**, **Redo**를 지원한다.
+> 이 함수들은 모두 `Undo`, `Redo`를 지원한다.
 + `Group` `<Ctrl+G>` : 새 오브젝트를 생성하고, 선택된 오브젝트들을 자식으로 설정한다. 부모가 다르면 각각 그룹화한다. 위치는 평균값으로 지정하고, RectTransform을 지원한다.
 + `Ungroup` `<Ctrl+Shift+G>` : 선택된 오브젝트들을 제거하고, 자식들을 밖으로 빼낸다.
