@@ -1,16 +1,16 @@
 /*
 
- - Á¶ÇÕÅ°
+ - ì¡°í•©í‚¤
  % : Ctrl or Cmd
  ^ : Ctrl
  # : Shift
  & : Alt
- _ : Á¶ÇÕÅ°°¡ ÇÊ¿äÇÏÁö ¾ÊÀº °æ¿ì
+ _ : ì¡°í•©í‚¤ê°€ í•„ìš”í•˜ì§€ ì•Šì€ ê²½ìš°
  
- - Æ¯¼ö¹®ÀÚ
- LEFT, RIGHT, UP, DOWN, F1ºÎÅÍ F12, HOME, END, PGUP, PGDN, INS, DEL, TAB, SPACE
+ - íŠ¹ìˆ˜ë¬¸ì
+ LEFT, RIGHT, UP, DOWN, F1ë¶€í„° F12, HOME, END, PGUP, PGDN, INS, DEL, TAB, SPACE
  
- Ex) Shift+Alt+G ´ÜÃàÅ°¸¦ °¡Áø ¸Ş´º¸¦ ¸¸µé·Á¸é "MyMenu/Do Something #&g"¸¦ »ç¿ëÇÏ°í, GÅ°¸¸ »ç¿ëÇÏ·Á¸é "MyMenu/Do Something _g"¸¦ »ç¿ëÇÑ´Ù.
+ Ex) Shift+Alt+G ë‹¨ì¶•í‚¤ë¥¼ ê°€ì§„ ë©”ë‰´ë¥¼ ë§Œë“¤ë ¤ë©´ "MyMenu/Do Something #&g"ë¥¼ ì‚¬ìš©í•˜ê³ , Gí‚¤ë§Œ ì‚¬ìš©í•˜ë ¤ë©´ "MyMenu/Do Something _g"ë¥¼ ì‚¬ìš©í•œë‹¤.
 
 */
 
@@ -50,18 +50,19 @@ public class Shortcuts : Editor
                 position += selections[i].position / l;
 
             GameObject groupObject = new GameObject("Group");
+            Undo.RegisterCreatedObjectUndo(groupObject, groupObject.name);
             if (isRectTransform) groupObject.AddComponent<RectTransform>();
             Transform groupTransform = groupObject.transform;
-            groupTransform.SetParent(parent, false);
-            groupTransform.SetSiblingIndex(selections[0].GetSiblingIndex());
+            Undo.SetTransformParent(groupTransform, parent, groupTransform.name);
+            Undo.SetSiblingIndex(groupTransform, selections[0].GetSiblingIndex(), groupTransform.name);
             groupTransform.position = position;
-            Undo.RegisterCreatedObjectUndo(groupObject, groupObject.name);
 
             for (int i = 0, l = selections.Count; i < l; ++i)
                 Undo.SetTransformParent(selections[i], groupTransform, selections[i].name);
 
             Selection.activeGameObject = groupObject;
         }
+
         DestroyImmediate(root.gameObject);
     }
     [MenuItem("Shortcuts/Ungroup %#g")]
@@ -72,14 +73,18 @@ public class Shortcuts : Editor
 
         for (int i = 0, l = transforms.Length; i < l; ++i)
         {
-            Transform parent = transforms[i].parent;
-            for (int j = 0, l2 = transforms[i].childCount; j < l2; ++j)
+            Transform transform = transforms[i];
+            if (transform.childCount > 0)
             {
-                Transform child = transforms[i].GetChild(i);
-                Undo.SetTransformParent(child, parent, child.name);
-                child.SetSiblingIndex(transforms[i].GetSiblingIndex());
+                Transform parent = transform.parent;
+                while (transform.childCount > 0)
+                {
+                    Transform child = transform.GetChild(0);
+                    Undo.SetTransformParent(child, parent, child.name);
+                    Undo.SetSiblingIndex(child, transform.GetSiblingIndex(), child.name);
+                }
+                Undo.DestroyObjectImmediate(transform.gameObject);
             }
-            Undo.DestroyObjectImmediate(transforms[i].gameObject);
         }
     }
 }
